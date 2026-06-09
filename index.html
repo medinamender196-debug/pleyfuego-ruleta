@@ -3,74 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juego de Canasta</title>
 
-<!-- Monetag -->
 <script src="//libtl.com/sdk.js"
         data-zone="11121391"
         data-sdk="show_11121391"></script>
 
+<title>🏀 Juego de Canasta</title>
+
 <style>
 body{
-    font-family: Arial, sans-serif;
+    margin:0;
+    font-family:Arial;
     text-align:center;
-    background:#f2f2f2;
-    padding:20px;
+    background:#87CEEB;
+    overflow:hidden;
 }
 
-button{
-    padding:15px 25px;
-    font-size:20px;
+#info{
+    padding:10px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+#campo{
+    position:relative;
+    width:100vw;
+    height:80vh;
+}
+
+#canasta{
+    position:absolute;
+    width:120px;
+    height:80px;
+    font-size:70px;
     cursor:pointer;
-}
-
-.info{
-    font-size:24px;
-    margin:15px;
+    user-select:none;
 }
 </style>
 </head>
 <body>
 
-<h1>🏀 Juego de Canasta</h1>
-
-<div class="info">
-Nivel: <span id="nivel">1</span>
+<div id="info">
+🏀 Nivel: <span id="nivel">1</span> |
+Puntos: <span id="puntos">0</span>/<span id="objetivo">3</span>
 </div>
 
-<div class="info">
-Puntos: <span id="puntos">0</span> /
-<span id="objetivo">3</span>
+<div id="campo">
+    <div id="canasta">🧺</div>
 </div>
-
-<button onclick="encestar()">
-🏀 Lanzar Pelota
-</button>
 
 <script>
 let nivel = 1;
 let puntos = 0;
 let objetivo = 3;
 
-function actualizarPantalla() {
+const canasta = document.getElementById("canasta");
+
+function moverCanasta() {
+    const ancho = window.innerWidth - 140;
+    const alto = window.innerHeight - 220;
+
+    canasta.style.left = Math.random() * ancho + "px";
+    canasta.style.top = Math.random() * alto + "px";
+}
+
+function actualizar() {
     document.getElementById("nivel").textContent = nivel;
     document.getElementById("puntos").textContent = puntos;
     document.getElementById("objetivo").textContent = objetivo;
 }
 
-function encestar() {
+canasta.addEventListener("click", () => {
+
     puntos++;
 
-    actualizarPantalla();
+    actualizar();
+
+    moverCanasta();
 
     if (puntos >= objetivo) {
         completarNivel();
     }
-}
+});
 
 function completarNivel() {
-
-    alert("🎉 Nivel completado");
 
     show_11121391()
     .then(() => {
@@ -79,30 +95,28 @@ function completarNivel() {
         puntos = 0;
         objetivo += 2;
 
-        actualizarPantalla();
+        actualizar();
 
-        alert("🏀 Bienvenido al nivel " + nivel);
+        alert("🎉 Pasaste al nivel " + nivel);
+
+        moverCanasta();
 
     })
-    .catch((error) => {
+    .catch(() => {
 
-        console.log(error);
-
-        // Si falla el anuncio, igualmente pasa de nivel
         nivel++;
         puntos = 0;
         objetivo += 2;
 
-        actualizarPantalla();
+        actualizar();
 
-        alert("🏀 Nivel " + nivel);
-
+        moverCanasta();
     });
 }
 
-actualizarPantalla();
+moverCanasta();
+actualizar();
 </script>
 
 </body>
 </html>
-
