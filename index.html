@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Ruleta con Niveles</title>
 
-<!-- 🔥 MONETAG SDK -->
 <script src='//libtl.com/sdk.js' data-zone='11121391' data-sdk='show_11121391'></script>
 
 <style>
@@ -61,23 +60,25 @@ button {
 <div id="stats">
     <p>💰 Puntos: <span id="points">0</span></p>
     <p>📊 Nivel: <span id="level">1</span></p>
+    <p>🎯 Giros: <span id="spins">0</span></p>
 </div>
 
 <script>
 
-// 🔥 cargar datos guardados
+// 🔥 datos guardados
 let points = parseInt(localStorage.getItem("points")) || 0;
 let level = parseInt(localStorage.getItem("level")) || 1;
+let spins = parseInt(localStorage.getItem("spins")) || 0;
 
 updateUI();
 
-// 📊 actualizar pantalla
 function updateUI() {
     document.getElementById("points").innerText = points;
     document.getElementById("level").innerText = level;
+    document.getElementById("spins").innerText = spins;
 }
 
-// 💰 agregar puntos
+// 💰 puntos + niveles
 function addPoints(amount) {
     points += amount;
 
@@ -94,58 +95,71 @@ function addPoints(amount) {
     updateUI();
 }
 
-// 🎡 RULETA + MONETAG
+// 🎡 RULETA
 function spin() {
 
-    if (typeof window.show_11121391 !== "function") {
-        alert("⚠️ El anuncio aún no está listo. Intenta en unos segundos.");
-        return;
+    spins++;
+    localStorage.setItem("spins", spins);
+    updateUI();
+
+    const wheel = document.getElementById("wheel");
+    const result = document.getElementById("result");
+
+    // 🎯 ANUNCIO SOLO CADA 3 GIROS
+    const showAd = spins % 3 === 0;
+
+    const doSpin = () => {
+
+        let deg = Math.floor(Math.random() * 360) + 1800;
+
+        wheel.style.transform = "rotate(" + deg + "deg)";
+
+        setTimeout(() => {
+
+            const premios = [
+                "10 puntos",
+                "25 puntos",
+                "50 puntos",
+                "100 puntos",
+                "200 puntos",
+                "Sigue intentando"
+            ];
+
+            let premio = premios[Math.floor(Math.random() * premios.length)];
+
+            let reward = 0;
+
+            switch (premio) {
+                case "10 puntos": reward = 10; break;
+                case "25 puntos": reward = 25; break;
+                case "50 puntos": reward = 50; break;
+                case "100 puntos": reward = 100; break;
+                case "200 puntos": reward = 200; break;
+                default: reward = 0;
+            }
+
+            addPoints(reward);
+
+            result.innerHTML = "🎉 Ganaste: " + premio;
+
+        }, 4000);
+    };
+
+    // 🔥 lógica ads cada 3 giros
+    if (showAd && typeof window.show_11121391 === "function") {
+
+        window.show_11121391('pop')
+            .then(() => {
+                doSpin();
+            })
+            .catch(() => {
+                alert("No hay anuncio disponible, girando sin anuncio...");
+                doSpin();
+            });
+
+    } else {
+        doSpin();
     }
-
-    window.show_11121391('pop')
-        .then(() => {
-
-            let deg = Math.floor(Math.random() * 360) + 1800;
-
-            const wheel = document.getElementById("wheel");
-            const result = document.getElementById("result");
-
-            wheel.style.transform = "rotate(" + deg + "deg)";
-
-            setTimeout(() => {
-
-                const premios = [
-                    "10 puntos",
-                    "25 puntos",
-                    "50 puntos",
-                    "100 puntos",
-                    "200 puntos",
-                    "Sigue intentando"
-                ];
-
-                let premio = premios[Math.floor(Math.random() * premios.length)];
-
-                let reward = 0;
-
-                switch (premio) {
-                    case "10 puntos": reward = 10; break;
-                    case "25 puntos": reward = 25; break;
-                    case "50 puntos": reward = 50; break;
-                    case "100 puntos": reward = 100; break;
-                    case "200 puntos": reward = 200; break;
-                    default: reward = 0;
-                }
-
-                addPoints(reward);
-
-                result.innerHTML = "🎉 Ganaste: " + premio;
-
-            }, 4000);
-
-        })
-        .catch(() => {
-            alert("❌ No hay anuncios disponibles ahora.");
-        });
 }
 
 </script>
