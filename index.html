@@ -2,203 +2,96 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Ruleta con Niveles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monetag Ads Demo</title>
 
-<script src='//libtl.com/sdk.js' data-zone='11121391' data-sdk='show_11121391'></script>
+<!-- Monetag SDK -->
+<script src="//libtl.com/sdk.js"
+        data-zone="11121391"
+        data-sdk="show_11121391"></script>
 
 <style>
-body {
-    font-family: Arial;
-    text-align: center;
-    background: #f2f2f2;
+body{
+    font-family: Arial, sans-serif;
+    text-align:center;
+    padding:40px;
+    background:#f5f5f5;
 }
-
-#wheel {
-    width: 200px;
-    height: 200px;
-    background: gold;
-    border-radius: 50%;
-    margin: 30px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 50px;
-    transition: transform 4s ease-out;
-}
-
-button {
-    padding: 12px 25px;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-#result {
-    margin-top: 20px;
-    font-size: 22px;
-}
-
-#stats {
-    margin-top: 20px;
-    background: white;
-    display: inline-block;
-    padding: 15px;
-    border-radius: 10px;
+button{
+    padding:12px 20px;
+    margin:10px;
+    font-size:16px;
+    cursor:pointer;
 }
 </style>
 </head>
-
 <body>
 
-<h2>🎡 Ruleta con Recompensas</h2>
+<h2>💰 Monetag Rewarded Ads</h2>
 
-<div id="wheel">🎡</div>
+<button onclick="rewardedAd()">
+🎁 Rewarded Interstitial
+</button>
 
-<button onclick="spin()">GIRAR</button>
-
-<div id="result"></div>
-
-<div id="stats">
-    <p>💰 Puntos: <span id="points">0</span></p>
-    <p>📊 Nivel: <span id="level">1</span></p>
-    <p>🎯 Giros: <span id="spins">0</span></p>
-</div>
+<button onclick="rewardedPopup()">
+🎉 Rewarded Popup
+</button>
 
 <script>
+// ===============================
+// REWARDED INTERSTITIAL
+// ===============================
+function rewardedAd() {
 
-// 🔥 datos guardados
-let points = parseInt(localStorage.getItem("points")) || 0;
-let level = parseInt(localStorage.getItem("level")) || 1;
-let spins = parseInt(localStorage.getItem("spins")) || 0;
+    show_11121391()
+    .then(() => {
 
-updateUI();
+        // Recompensa al usuario
+        alert("✅ Ganaste 100 monedas");
 
-function updateUI() {
-    document.getElementById("points").innerText = points;
-    document.getElementById("level").innerText = level;
-    document.getElementById("spins").innerText = spins;
+    })
+    .catch(() => {
+
+        alert("❌ No se pudo mostrar el anuncio");
+
+    });
+
 }
 
-// 💰 puntos + niveles
-function addPoints(amount) {
-    points += amount;
+// ===============================
+// REWARDED POPUP
+// ===============================
+function rewardedPopup() {
 
-    let newLevel = Math.floor(points / 100) + 1;
+    show_11121391('pop')
+    .then(() => {
 
-    if (newLevel > level) {
-        level = newLevel;
-        alert("🎉 Subiste al nivel " + level + "!");
+        // Recompensa al usuario
+        alert("✅ Ganaste 50 monedas");
+
+    })
+    .catch(() => {
+
+        alert("❌ Error al mostrar el anuncio");
+
+    });
+
+}
+
+// ===============================
+// IN-APP INTERSTITIAL AUTOMÁTICO
+// ===============================
+show_11121391({
+    type: 'inApp',
+    inAppSettings: {
+        frequency: 2,
+        capping: 0.1,
+        interval: 30,
+        timeout: 5,
+        everyPage: false
     }
-
-    localStorage.setItem("points", points);
-    localStorage.setItem("level", level);
-
-    updateUI();
-}
-
-// 🎡 RULETA
-function spin() {
-
-    spins++;
-    localStorage.setItem("spins", spins);
-    updateUI();
-
-    const wheel = document.getElementById("wheel");
-    const result = document.getElementById("result");
-
-    // 🎯 ANUNCIO SOLO CADA 3 GIROS
-    const showAd = spins % 3 === 0;
-
-    const doSpin = () => {
-
-        let deg = Math.floor(Math.random() * 360) + 1800;
-
-        wheel.style.transform = "rotate(" + deg + "deg)";
-
-        setTimeout(() => {
-
-            const premios = [
-                "10 puntos",
-                "25 puntos",
-                "50 puntos",
-                "100 puntos",
-                "200 puntos",
-                "Sigue intentando"
-            ];
-
-            let premio = premios[Math.floor(Math.random() * premios.length)];
-
-            let reward = 0;
-
-            switch (premio) {
-                case "10 puntos": reward = 10; break;
-                case "25 puntos": reward = 25; break;
-                case "50 puntos": reward = 50; break;
-                case "100 puntos": reward = 100; break;
-                case "200 puntos": reward = 200; break;
-                default: reward = 0;
-            }
-
-            addPoints(reward);
-
-            result.innerHTML = "🎉 Ganaste: " + premio;
-
-        }, 4000);
-    };
-
-    // 🔥 lógica ads cada 3 giros
-    if (showAd && typeof window.show_11121391 === "function") {
-
-        window.show_11121391('pop')
-            .then(() => {
-                doSpin();
-            })
-            .catch(() => {
-                alert("No hay anuncio disponible, girando sin anuncio...");
-                doSpin();
-            });
-
-    } else {
-        doSpin();
-    }
-}
-
+});
 </script>
 
 </body>
 </html>
-<div id="shop">
-    <h3>🛒 Tienda</h3>
-
-    <button onclick="buy('Skin VIP', 200)">Skin VIP - 200 pts</button><br><br>
-    <button onclick="buy('Giro Extra', 150)">Giro Extra - 150 pts</button><br><br>
-    <button onclick="buy('Multiplicador x2', 300)">x2 Puntos - 300 pts</button>
-
-    <p id="shopmsg"></p>
-</div>
-function buy(item, cost) {
-
-    const msg = document.getElementById("shopmsg");
-
-    if (points >= cost) {
-        points -= cost;
-
-        localStorage.setItem("points", points);
-        updateUI();
-
-        msg.innerHTML = "✅ Compraste: " + item;
-
-        // 🎁 efectos por compra
-        if (item === "Giro Extra") {
-            spins = Math.max(0, spins - 1);
-            localStorage.setItem("spins", spins);
-            updateUI();
-        }
-
-        if (item === "Multiplicador x2") {
-            alert("🔥 Multiplicador activado (bonus en próximos premios)");
-        }
-
-    } else {
-        msg.innerHTML = "❌ No tienes suficientes puntos";
-    }
-}
