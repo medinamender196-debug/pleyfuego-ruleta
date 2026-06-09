@@ -95,41 +95,29 @@ show_11121391({
 
 </body>
 </html>
-<script src="//libtl.com/sdk.js"
-        data-zone="11121391"
-        data-sdk="show_11121391"></script>
-
-<h2>🏎️ Juego de Carreras</h2>
-
-<p>Nivel actual: <span id="nivel">1</span></p>
-
-<button onclick="completarNivel()">
-🏁 Completar Nivel
-</button>
-
-<script>
 let nivel = 1;
+let puntos = 0;
+let objetivo = 3;
+
+function encestar() {
+    puntos++;
+
+    if (puntos >= objetivo) {
+        completarNivel();
+    }
+}
 
 function completarNivel() {
 
-    alert("¡Nivel " + nivel + " completado!");
-
-    // Mostrar anuncio
     show_11121391()
     .then(() => {
 
-        // Pasar al siguiente nivel
         nivel++;
+        puntos = 0;
+        objetivo += 2;
 
-        document.getElementById("nivel").textContent = nivel;
-
-        alert("🚗 Bienvenido al nivel " + nivel);
-
-    })
-    .catch(() => {
-
-        alert("No se pudo mostrar el anuncio.");
+        alert("🏀 Nivel " + nivel);
 
     });
 }
-</script>
+
