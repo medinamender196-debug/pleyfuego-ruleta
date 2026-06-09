@@ -1,33 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ruleta Monetag</title>
+
+<!-- 🔥 MONETAG (OBLIGATORIO) -->
 <script src="https://a.monetag.com/tag.min.js"></script>
 
+<style>
+    body {
+        font-family: Arial;
+        text-align: center;
+        background: #f2f2f2;
+    }
+
+    #wheel {
+        width: 200px;
+        height: 200px;
+        background: gold;
+        border-radius: 50%;
+        margin: 40px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 50px;
+        transition: transform 4s ease-out;
+    }
+
+    button {
+        padding: 12px 25px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    #result {
+        margin-top: 20px;
+        font-size: 22px;
+    }
+</style>
+</head>
+
+<body>
+
+<h2>🎡 Ruleta de premios</h2>
+
+<div id="wheel">🎡</div>
+
+<button onclick="spin()">GIRAR</button>
+
+<div id="result"></div>
+
+<script>
 function spin() {
 
+    // ⏳ Espera breve para cargar Monetag
     setTimeout(() => {
 
+        // 🚨 Verifica si Monetag está listo
         if (typeof window.show_3364306 !== "function") {
-            alert("El anuncio aún no está disponible. Intenta en 10–20 segundos.");
+            alert("⚠️ El anuncio aún no está disponible. Intenta en unos segundos.");
             return;
         }
 
+        // 🎬 Mostrar anuncio Rewarded
         window.show_3364306()
             .then(() => {
 
+                // 🎡 Girar ruleta
                 let deg = Math.floor(Math.random() * 360) + 1800;
 
                 const wheel = document.getElementById("wheel");
                 const result = document.getElementById("result");
 
-                wheel.style.transition = "transform 4s ease-out";
                 wheel.style.transform = "rotate(" + deg + "deg)";
 
                 setTimeout(() => {
-                    result.innerHTML = "🎉 Ganaste un premio";
+
+                    const premios = [
+                        "10 puntos",
+                        "25 puntos",
+                        "50 puntos",
+                        "100 puntos",
+                        "200 puntos",
+                        "Sigue intentando"
+                    ];
+
+                    let premio = premios[Math.floor(Math.random() * premios.length)];
+
+                    result.innerHTML = "🎉 Ganaste: " + premio;
+
                 }, 4000);
 
             })
             .catch(() => {
-                alert("No hay anuncios disponibles ahora. Intenta más tarde.");
+                alert("❌ No hay anuncios disponibles ahora. Intenta más tarde.");
             });
 
-    }, 2000); // 👈 espera 2 segundos antes de llamar Monetag
+    }, 2000); // espera para que Monetag cargue
 }
+</script>
+
+</body>
+</html>
