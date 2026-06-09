@@ -1,68 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Ruleta Pleyfuego</title>
-<style>
-body{
-font-family:Arial;
-text-align:center;
-padding:30px;
+function spin() {
+
+    show_11121391().then(() => {
+
+        // El usuario vio el anuncio completo
+
+        let deg = Math.floor(Math.random()*360)+1800;
+
+        document.getElementById("wheel").style.transform =
+        "rotate("+deg+"deg)";
+
+        setTimeout(() => {
+
+            let premios = [
+                "10 puntos",
+                "25 puntos",
+                "50 puntos",
+                "100 puntos",
+                "200 puntos",
+                "Sigue intentando"
+            ];
+
+            let premio =
+            premios[Math.floor(Math.random()*premios.length)];
+
+            document.getElementById("result").innerHTML =
+            "🎉 Ganaste: " + premio;
+
+        }, 4000);
+
+    }).catch(() => {
+
+        alert("Debes ver el anuncio para girar la ruleta");
+
+    });
+
 }
-#wheel{
-width:300px;
-height:300px;
-border-radius:50%;
-margin:auto;
-background:conic-gradient(
-red 0deg 60deg,
-blue 60deg 120deg,
-green 120deg 180deg,
-yellow 180deg 240deg,
-purple 240deg 300deg,
-orange 300deg 360deg
-);
-transition:transform 4s;
-}
-button{
-margin-top:20px;
-padding:15px 30px;
-font-size:20px;
-}
-</style>
-</head>
-<body>
-
-<h1>🎮 Ruleta Pleyfuego</h1>
-
-<div id="wheel"></div>
-
-<button onclick="spin()">GIRAR</button>
-
-<h2 id="result"></h2>
-
-<script>
-function spin(){
-let deg=Math.floor(Math.random()*360)+1800;
-document.getElementById("wheel").style.transform=
-"rotate("+deg+"deg)";
-
-setTimeout(()=>{
-let premios=[
-"10 puntos",
-"25 puntos",
-"50 puntos",
-"100 puntos",
-"200 puntos",
-"Sigue intentando"
-];
-let premio=
-premios[Math.floor(Math.random()*premios.length)];
-document.getElementById("result").innerHTML=
-"🎉 Ganaste: "+premio;
-},4000);
-}
-</script>
-
-</body>
-</html>
