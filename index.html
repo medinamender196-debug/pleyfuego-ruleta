@@ -1,32 +1,93 @@
-function spin() {
-    show_11121391()
-        .then(() => {
-            // El usuario vio el anuncio completo
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ruleta</title>
 
-            let deg = Math.floor(Math.random() * 360) + 1800;
+    <!-- 🔥 Monetag script (IMPORTANTE) -->
+    <script src="https://a.monetag.com/tag.min.js"></script>
 
-            const wheel = document.getElementById("wheel");
-            const result = document.getElementById("result");
+    <style>
+        #wheel {
+            width: 200px;
+            height: 200px;
+            background: gold;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+        }
 
-            wheel.style.transition = "transform 4s ease-out";
-            wheel.style.transform = "rotate(" + deg + "deg)";
+        #result {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
+        }
 
-            setTimeout(() => {
-                const premios = [
-                    "10 puntos",
-                    "25 puntos",
-                    "50 puntos",
-                    "100 puntos",
-                    "200 puntos",
-                    "Sigue intentando"
-                ];
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
 
-                let premio = premios[Math.floor(Math.random() * premios.length)];
+<body>
 
-                result.innerHTML = "🎉 Ganaste: " + premio;
-            }, 4000);
-        })
-        .catch(() => {
-            alert("Debes ver el anuncio completo para girar la ruleta");
-        });
-}
+    <div id="wheel">🎡</div>
+
+    <button onclick="spin()">GIRAR</button>
+
+    <div id="result"></div>
+
+    <script>
+        function spin() {
+
+            // 🚨 Verifica Monetag
+            if (typeof show_11121391 !== "function") {
+                alert("El anuncio aún no carga, intenta otra vez");
+                return;
+            }
+
+            // 🎬 Mostrar anuncio Rewarded
+            show_11121391()
+                .then(() => {
+
+                    // 🎡 Gira ruleta
+                    let deg = Math.floor(Math.random() * 360) + 1800;
+
+                    const wheel = document.getElementById("wheel");
+                    const result = document.getElementById("result");
+
+                    wheel.style.transition = "transform 4s ease-out";
+                    wheel.style.transform = "rotate(" + deg + "deg)";
+
+                    setTimeout(() => {
+
+                        const premios = [
+                            "10 puntos",
+                            "25 puntos",
+                            "50 puntos",
+                            "100 puntos",
+                            "200 puntos",
+                            "Sigue intentando"
+                        ];
+
+                        let premio = premios[Math.floor(Math.random() * premios.length)];
+
+                        result.innerHTML = "🎉 Ganaste: " + premio;
+
+                    }, 4000);
+
+                })
+                .catch(() => {
+                    alert("Debes ver el anuncio completo para girar la ruleta");
+                });
+        }
+    </script>
+
+</body>
+</html>
