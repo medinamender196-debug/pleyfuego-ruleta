@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Ruleta Monetag</title>
+<title>Ruleta con Niveles</title>
 
-<!-- 🔥 SDK CORRECTO -->
+<!-- 🔥 MONETAG SDK -->
 <script src='//libtl.com/sdk.js' data-zone='11121391' data-sdk='show_11121391'></script>
 
 <style>
@@ -19,7 +19,7 @@ body {
     height: 200px;
     background: gold;
     border-radius: 50%;
-    margin: 40px auto;
+    margin: 30px auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -30,18 +30,27 @@ body {
 button {
     padding: 12px 25px;
     font-size: 18px;
+    cursor: pointer;
 }
 
 #result {
     margin-top: 20px;
     font-size: 22px;
 }
+
+#stats {
+    margin-top: 20px;
+    background: white;
+    display: inline-block;
+    padding: 15px;
+    border-radius: 10px;
+}
 </style>
 </head>
 
 <body>
 
-<h2>🎡 Ruleta de Premios</h2>
+<h2>🎡 Ruleta con Recompensas</h2>
 
 <div id="wheel">🎡</div>
 
@@ -49,20 +58,53 @@ button {
 
 <div id="result"></div>
 
+<div id="stats">
+    <p>💰 Puntos: <span id="points">0</span></p>
+    <p>📊 Nivel: <span id="level">1</span></p>
+</div>
+
 <script>
+
+// 🔥 cargar datos guardados
+let points = parseInt(localStorage.getItem("points")) || 0;
+let level = parseInt(localStorage.getItem("level")) || 1;
+
+updateUI();
+
+// 📊 actualizar pantalla
+function updateUI() {
+    document.getElementById("points").innerText = points;
+    document.getElementById("level").innerText = level;
+}
+
+// 💰 agregar puntos
+function addPoints(amount) {
+    points += amount;
+
+    let newLevel = Math.floor(points / 100) + 1;
+
+    if (newLevel > level) {
+        level = newLevel;
+        alert("🎉 Subiste al nivel " + level + "!");
+    }
+
+    localStorage.setItem("points", points);
+    localStorage.setItem("level", level);
+
+    updateUI();
+}
+
+// 🎡 RULETA + MONETAG
 function spin() {
 
-    // 🚨 Verifica si el SDK cargó
     if (typeof window.show_11121391 !== "function") {
         alert("⚠️ El anuncio aún no está listo. Intenta en unos segundos.");
         return;
     }
 
-    // 🎬 Mostrar anuncio rewarded
     window.show_11121391('pop')
         .then(() => {
 
-            // 🎡 girar ruleta SOLO si vio el anuncio
             let deg = Math.floor(Math.random() * 360) + 1800;
 
             const wheel = document.getElementById("wheel");
@@ -83,6 +125,19 @@ function spin() {
 
                 let premio = premios[Math.floor(Math.random() * premios.length)];
 
+                let reward = 0;
+
+                switch (premio) {
+                    case "10 puntos": reward = 10; break;
+                    case "25 puntos": reward = 25; break;
+                    case "50 puntos": reward = 50; break;
+                    case "100 puntos": reward = 100; break;
+                    case "200 puntos": reward = 200; break;
+                    default: reward = 0;
+                }
+
+                addPoints(reward);
+
                 result.innerHTML = "🎉 Ganaste: " + premio;
 
             }, 4000);
@@ -92,44 +147,8 @@ function spin() {
             alert("❌ No hay anuncios disponibles ahora.");
         });
 }
+
 </script>
 
 </body>
 </html>
-<div id="stats">
-    <h3>📊 Progreso del jugador</h3>
-    <p>Puntos: <span id="points">0</span></p>
-    <p>Nivel: <span id="level">1</span></p>
-</div>
-
-<script>
-let points = localStorage.getItem("points") || 0;
-let level = localStorage.getItem("level") || 1;
-
-points = parseInt(points);
-level = parseInt(level);
-
-document.getElementById("points").innerText = points;
-document.getElementById("level").innerText = level;
-
-// 🎯 función para sumar puntos
-function addPoints(amount) {
-    points += amount;
-
-    // 📊 sistema de niveles (cada 100 puntos sube nivel)
-    let newLevel = Math.floor(points / 100) + 1;
-
-    if (newLevel > level) {
-        level = newLevel;
-        alert("🎉 Subiste al nivel " + level + "!");
-    }
-
-    // guardar en navegador
-    localStorage.setItem("points", points);
-    localStorage.setItem("level", level);
-
-    // actualizar UI
-    document.getElementById("points").innerText = points;
-    document.getElementById("level").innerText = level;
-}
-</script>
