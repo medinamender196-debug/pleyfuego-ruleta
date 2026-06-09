@@ -2,16 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Ruleta Monetag</title>
+<title>Ruleta con Monetag</title>
 
-<!-- 🔥 MONETAG (OBLIGATORIO) -->
+<!-- 🔥 MONETAG SCRIPT (OBLIGATORIO) -->
 <script src="https://a.monetag.com/tag.min.js"></script>
 
 <style>
     body {
         font-family: Arial;
         text-align: center;
-        background: #f2f2f2;
+        background: #f5f5f5;
     }
 
     #wheel {
@@ -42,7 +42,7 @@
 
 <body>
 
-<h2>🎡 Ruleta de premios</h2>
+<h2>🎡 Ruleta de Premios</h2>
 
 <div id="wheel">🎡</div>
 
@@ -53,50 +53,47 @@
 <script>
 function spin() {
 
-    // ⏳ Espera breve para cargar Monetag
-    setTimeout(() => {
+    // 🚨 Verifica Monetag cargado
+    if (typeof window.show_11121391 !== "function") {
+        alert("⚠️ El anuncio aún no está listo. Intenta en unos segundos.");
+        return;
+    }
 
-        // 🚨 Verifica si Monetag está listo
-        if (typeof window.show_3364306 !== "function") {
-            alert("⚠️ El anuncio aún no está disponible. Intenta en unos segundos.");
-            return;
-        }
+    // 🎬 Mostrar Rewarded Popup
+    window.show_11121391('pop')
+        .then(() => {
 
-        // 🎬 Mostrar anuncio Rewarded
-        window.show_3364306()
-            .then(() => {
+            // 🎡 Girar ruleta SOLO si vio el anuncio
 
-                // 🎡 Girar ruleta
-                let deg = Math.floor(Math.random() * 360) + 1800;
+            let deg = Math.floor(Math.random() * 360) + 1800;
 
-                const wheel = document.getElementById("wheel");
-                const result = document.getElementById("result");
+            const wheel = document.getElementById("wheel");
+            const result = document.getElementById("result");
 
-                wheel.style.transform = "rotate(" + deg + "deg)";
+            wheel.style.transform = "rotate(" + deg + "deg)";
 
-                setTimeout(() => {
+            setTimeout(() => {
 
-                    const premios = [
-                        "10 puntos",
-                        "25 puntos",
-                        "50 puntos",
-                        "100 puntos",
-                        "200 puntos",
-                        "Sigue intentando"
-                    ];
+                const premios = [
+                    "10 puntos",
+                    "25 puntos",
+                    "50 puntos",
+                    "100 puntos",
+                    "200 puntos",
+                    "Sigue intentando"
+                ];
 
-                    let premio = premios[Math.floor(Math.random() * premios.length)];
+                let premio = premios[Math.floor(Math.random() * premios.length)];
 
-                    result.innerHTML = "🎉 Ganaste: " + premio;
+                result.innerHTML = "🎉 Ganaste: " + premio;
 
-                }, 4000);
+            }, 4000);
 
-            })
-            .catch(() => {
-                alert("❌ No hay anuncios disponibles ahora. Intenta más tarde.");
-            });
+        })
+        .catch(() => {
+            alert("❌ No se pudo mostrar el anuncio. Intenta más tarde.");
+        });
 
-    }, 2000); // espera para que Monetag cargue
 }
 </script>
 
