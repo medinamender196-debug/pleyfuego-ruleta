@@ -166,3 +166,39 @@ function spin() {
 
 </body>
 </html>
+<div id="shop">
+    <h3>🛒 Tienda</h3>
+
+    <button onclick="buy('Skin VIP', 200)">Skin VIP - 200 pts</button><br><br>
+    <button onclick="buy('Giro Extra', 150)">Giro Extra - 150 pts</button><br><br>
+    <button onclick="buy('Multiplicador x2', 300)">x2 Puntos - 300 pts</button>
+
+    <p id="shopmsg"></p>
+</div>
+function buy(item, cost) {
+
+    const msg = document.getElementById("shopmsg");
+
+    if (points >= cost) {
+        points -= cost;
+
+        localStorage.setItem("points", points);
+        updateUI();
+
+        msg.innerHTML = "✅ Compraste: " + item;
+
+        // 🎁 efectos por compra
+        if (item === "Giro Extra") {
+            spins = Math.max(0, spins - 1);
+            localStorage.setItem("spins", spins);
+            updateUI();
+        }
+
+        if (item === "Multiplicador x2") {
+            alert("🔥 Multiplicador activado (bonus en próximos premios)");
+        }
+
+    } else {
+        msg.innerHTML = "❌ No tienes suficientes puntos";
+    }
+}
