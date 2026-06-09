@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Monetag Ads Demo</title>
+<title>Juego de Canasta</title>
 
-<!-- Monetag SDK -->
+<!-- Monetag -->
 <script src="//libtl.com/sdk.js"
         data-zone="11121391"
         data-sdk="show_11121391"></script>
@@ -14,93 +14,54 @@
 body{
     font-family: Arial, sans-serif;
     text-align:center;
-    padding:40px;
-    background:#f5f5f5;
+    background:#f2f2f2;
+    padding:20px;
 }
+
 button{
-    padding:12px 20px;
-    margin:10px;
-    font-size:16px;
+    padding:15px 25px;
+    font-size:20px;
     cursor:pointer;
+}
+
+.info{
+    font-size:24px;
+    margin:15px;
 }
 </style>
 </head>
 <body>
 
-<h2>💰 Monetag Rewarded Ads</h2>
+<h1>🏀 Juego de Canasta</h1>
 
-<button onclick="rewardedAd()">
-🎁 Rewarded Interstitial
-</button>
+<div class="info">
+Nivel: <span id="nivel">1</span>
+</div>
 
-<button onclick="rewardedPopup()">
-🎉 Rewarded Popup
+<div class="info">
+Puntos: <span id="puntos">0</span> /
+<span id="objetivo">3</span>
+</div>
+
+<button onclick="encestar()">
+🏀 Lanzar Pelota
 </button>
 
 <script>
-// ===============================
-// REWARDED INTERSTITIAL
-// ===============================
-function rewardedAd() {
-
-    show_11121391()
-    .then(() => {
-
-        // Recompensa al usuario
-        alert("✅ Ganaste 100 monedas");
-
-    })
-    .catch(() => {
-
-        alert("❌ No se pudo mostrar el anuncio");
-
-    });
-
-}
-
-// ===============================
-// REWARDED POPUP
-// ===============================
-function rewardedPopup() {
-
-    show_11121391('pop')
-    .then(() => {
-
-        // Recompensa al usuario
-        alert("✅ Ganaste 50 monedas");
-
-    })
-    .catch(() => {
-
-        alert("❌ Error al mostrar el anuncio");
-
-    });
-
-}
-
-// ===============================
-// IN-APP INTERSTITIAL AUTOMÁTICO
-// ===============================
-show_11121391({
-    type: 'inApp',
-    inAppSettings: {
-        frequency: 2,
-        capping: 0.1,
-        interval: 30,
-        timeout: 5,
-        everyPage: false
-    }
-});
-</script>
-
-</body>
-</html>
 let nivel = 1;
 let puntos = 0;
 let objetivo = 3;
 
+function actualizarPantalla() {
+    document.getElementById("nivel").textContent = nivel;
+    document.getElementById("puntos").textContent = puntos;
+    document.getElementById("objetivo").textContent = objetivo;
+}
+
 function encestar() {
     puntos++;
+
+    actualizarPantalla();
 
     if (puntos >= objetivo) {
         completarNivel();
@@ -109,6 +70,8 @@ function encestar() {
 
 function completarNivel() {
 
+    alert("🎉 Nivel completado");
+
     show_11121391()
     .then(() => {
 
@@ -116,8 +79,30 @@ function completarNivel() {
         puntos = 0;
         objetivo += 2;
 
+        actualizarPantalla();
+
+        alert("🏀 Bienvenido al nivel " + nivel);
+
+    })
+    .catch((error) => {
+
+        console.log(error);
+
+        // Si falla el anuncio, igualmente pasa de nivel
+        nivel++;
+        puntos = 0;
+        objetivo += 2;
+
+        actualizarPantalla();
+
         alert("🏀 Nivel " + nivel);
 
     });
 }
+
+actualizarPantalla();
+</script>
+
+</body>
+</html>
 
