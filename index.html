@@ -1,72 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="//libtl.com/sdk.js"
+        data-zone="11121391"
+        data-sdk="show_11121391"></script>
+
+<title>🏀 Juego de Canasta</title>
+
+<style>
 body{
-margin:0;
-font-family:'Arial',sans-serif;
-overflow:hidden;
-background:linear-gradient(#4fc3f7,#81d4fa);
+    margin:0;
+    font-family:Arial;
+    text-align:center;
+    background:#87CEEB;
+    overflow:hidden;
 }
 
 #info{
-position:fixed;
-top:10px;
-left:50%;
-transform:translateX(-50%);
-background:rgba(0,0,0,.7);
-color:white;
-padding:12px 20px;
-border-radius:20px;
-font-size:18px;
-display:flex;
-gap:20px;
-z-index:100;
-box-shadow:0 0 15px rgba(0,0,0,.3);
+    padding:10px;
+    font-size:22px;
+    font-weight:bold;
 }
 
 #campo{
-position:relative;
-width:100vw;
-height:100vh;
-background:
-radial-gradient(circle at center,#d7a86e 0%,#c78d4d 70%);
+    position:relative;
+    width:100vw;
+    height:80vh;
 }
 
 #canasta{
-position:absolute;
-width:140px;
-height:60px;
-cursor:pointer;
-user-select:none;
+    position:absolute;
+    width:120px;
+    height:80px;
+    font-size:70px;
+    cursor:pointer;
+    user-select:none;
+}
+</style>
+</head>
+<body>
+
+<div id="info">
+🏀 Nivel: <span id="nivel">1</span> |
+Puntos: <span id="puntos">0</span>/<span id="objetivo">3</span>
+</div>
+
+<div id="campo">
+    <div id="canasta">🧺</div>
+</div>
+
+<script>
+let nivel = 1;
+let puntos = 0;
+let objetivo = 3;
+
+const canasta = document.getElementById("canasta");
+
+function moverCanasta() {
+    const ancho = window.innerWidth - 140;
+    const alto = window.innerHeight - 220;
+
+    canasta.style.left = Math.random() * ancho + "px";
+    canasta.style.top = Math.random() * alto + "px";
 }
 
-#canasta::before{
-content:'🏀';
-font-size:60px;
-position:absolute;
-top:-50px;
-left:40px;
+function actualizar() {
+    document.getElementById("nivel").textContent = nivel;
+    document.getElementById("puntos").textContent = puntos;
+    document.getElementById("objetivo").textContent = objetivo;
 }
 
-#canasta::after{
-content:'';
-position:absolute;
-width:120px;
-height:10px;
-background:#ff3d00;
-border-radius:20px;
-bottom:20px;
-left:10px;
+canasta.addEventListener("click", () => {
+
+    puntos++;
+
+    actualizar();
+
+    moverCanasta();
+
+    if (puntos >= objetivo) {
+        completarNivel();
+    }
+});
+
+function completarNivel() {
+
+    show_11121391()
+    .then(() => {
+
+        nivel++;
+        puntos = 0;
+        objetivo += 2;
+
+        actualizar();
+
+        alert("🎉 Pasaste al nivel " + nivel);
+
+        moverCanasta();
+
+    })
+    .catch(() => {
+
+        nivel++;
+        puntos = 0;
+        objetivo += 2;
+
+        actualizar();
+
+        moverCanasta();
+    });
 }
 
-.moneda{
-color:gold;
-font-weight:bold;
-}
+moverCanasta();
+actualizar();
+</script>
 
-.vidas{
-color:red;
-}
-
-.record{
-color:#00ff9d;
-}
-
-
+</body>
+</html>
