@@ -1,122 +1,60 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+Características del juego:
 
-<script src="//libtl.com/sdk.js"
-        data-zone="11121391"
-        data-sdk="show_11121391"></script>
+* La pelota aparece abajo.
+* El jugador arrastra hacia atrás y suelta para lanzar.
+* Si la pelota atraviesa la canasta, suma un punto.
+* Cada nivel:
 
-<title>🏀 Juego de Canasta</title>
+  * La canasta se hace más pequeña.
+  * La canasta se mueve más rápido.
+  * Se necesitan más encestes.
+* Al completar el nivel:
 
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    text-align:center;
-    background:#87CEEB;
-    overflow:hidden;
-}
+  * Se ejecuta `show_11121391()`.
+  * Después del anuncio se carga el siguiente nivel.
 
-#info{
-    padding:10px;
-    font-size:22px;
-    font-weight:bold;
-}
+Variables recomendadas:
 
-#campo{
-    position:relative;
-    width:100vw;
-    height:80vh;
-}
-
-#canasta{
-    position:absolute;
-    width:120px;
-    height:80px;
-    font-size:70px;
-    cursor:pointer;
-    user-select:none;
-}
-</style>
-</head>
-<body>
-
-<div id="info">
-🏀 Nivel: <span id="nivel">1</span> |
-Puntos: <span id="puntos">0</span>/<span id="objetivo">3</span>
-</div>
-
-<div id="campo">
-    <div id="canasta">🧺</div>
-</div>
-
-<script>
+```javascript
 let nivel = 1;
 let puntos = 0;
 let objetivo = 3;
 
-const canasta = document.getElementById("canasta");
+let canasta = {
+  x: 150,
+  y: 120,
+  ancho: 120,
+  alto: 15,
+  velocidad: 2
+};
 
-function moverCanasta() {
-    const ancho = window.innerWidth - 140;
-    const alto = window.innerHeight - 220;
+let pelota = {
+  x: 200,
+  y: 600,
+  radio: 18,
+  vx: 0,
+  vy: 0
+};
+```
 
-    canasta.style.left = Math.random() * ancho + "px";
-    canasta.style.top = Math.random() * alto + "px";
-}
+Al subir de nivel:
 
-function actualizar() {
-    document.getElementById("nivel").textContent = nivel;
-    document.getElementById("puntos").textContent = puntos;
-    document.getElementById("objetivo").textContent = objetivo;
-}
+```javascript
+function siguienteNivel() {
+  show_11121391().then(() => {
 
-canasta.addEventListener("click", () => {
+    nivel++;
+    puntos = 0;
+    objetivo += 2;
 
-    puntos++;
+    canasta.ancho -= 10;
 
-    actualizar();
-
-    moverCanasta();
-
-    if (puntos >= objetivo) {
-        completarNivel();
+    if (canasta.ancho < 50) {
+      canasta.ancho = 50;
     }
-});
 
-function completarNivel() {
-
-    show_11121391()
-    .then(() => {
-
-        nivel++;
-        puntos = 0;
-        objetivo += 2;
-
-        actualizar();
-
-        alert("🎉 Pasaste al nivel " + nivel);
-
-        moverCanasta();
-
-    })
-    .catch(() => {
-
-        nivel++;
-        puntos = 0;
-        objetivo += 2;
-
-        actualizar();
-
-        moverCanasta();
-    });
+    canasta.velocidad += 0.5;
+  });
 }
+```
 
-moverCanasta();
-actualizar();
-</script>
-
-</body>
-</html>
