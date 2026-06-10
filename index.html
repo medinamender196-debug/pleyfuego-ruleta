@@ -3,120 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="//libtl.com/sdk.js"
-        data-zone="11121391"
-        data-sdk="show_11121391"></script>
-
-<title>🏀 Juego de Canasta</title>
-
+<title>Ruleta Pro</title>
+<script src='//libtl.com/sdk.js' data-zone='11121391' data-sdk='show_11121391'></script>
 <style>
-body{
-    margin:0;
-    font-family:Arial;
-    text-align:center;
-    background:#87CEEB;
-    overflow:hidden;
-}
-
-#info{
-    padding:10px;
-    font-size:22px;
-    font-weight:bold;
-}
-
-#campo{
-    position:relative;
-    width:100vw;
-    height:80vh;
-}
-
-#canasta{
-    position:absolute;
-    width:120px;
-    height:80px;
-    font-size:70px;
-    cursor:pointer;
-    user-select:none;
-}
+body{font-family:Arial,sans-serif;background:#eef3f8;margin:0;padding:20px;text-align:center}
+.card{background:#fff;border-radius:16px;padding:16px;margin:12px auto;max-width:500px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+#wheel{width:220px;height:220px;border-radius:50%;margin:20px auto;display:flex;align-items:center;justify-content:center;
+background:conic-gradient(#ff6b6b 0 60deg,#ffd93d 60deg 120deg,#6bcB77 120deg 180deg,#4d96ff 180deg 240deg,#b983ff 240deg 300deg,#ff8fab 300deg 360deg);
+font-size:48px;transition:transform 4s ease-out}
+button{padding:12px 18px;border:none;border-radius:10px;cursor:pointer}
+.progress{height:18px;background:#ddd;border-radius:10px;overflow:hidden}
+.bar{height:100%;width:0%;background:#4d96ff}
 </style>
 </head>
 <body>
-
-<div id="info">
-🏀 Nivel: <span id="nivel">1</span> |
-Puntos: <span id="puntos">0</span>/<span id="objetivo">3</span>
+<div class="card">
+<h2>🎡 Ruleta Pro</h2>
+<div id="wheel">🎡</div>
+<button onclick="spin()">GIRAR</button>
+<p id="result"></p>
 </div>
 
-<div id="campo">
-    <div id="canasta">🧺</div>
+<div class="card">
+<h3>📊 Progreso</h3>
+<p>💰 Puntos: <span id="points">0</span></p>
+<p>⭐ Nivel: <span id="level">1</span></p>
+<div class="progress"><div class="bar" id="xpBar"></div></div>
+</div>
+
+<div class="card">
+<h3>🎁 Recompensa diaria</h3>
+<button onclick="dailyReward()">Reclamar</button>
+</div>
+
+<div class="card">
+<h3>🛒 Tienda</h3>
+<button onclick="buy(200,'Giro VIP')">Giro VIP (200)</button>
+<button onclick="buy(500,'Caja Misteriosa')">Caja (500)</button>
+<p id="shopMsg"></p>
 </div>
 
 <script>
-let nivel = 1;
-let puntos = 0;
-let objetivo = 3;
+let points=parseInt(localStorage.getItem('points')||0);
+let level=parseInt(localStorage.getItem('level')||1);
+let spins=parseInt(localStorage.getItem('spins')||0);
 
-const canasta = document.getElementById("canasta");
+function updateUI(){
+ document.getElementById('points').textContent=points;
+ document.getElementById('level').textContent=level;
+ let pct=(points%100);
+ document.getElementById('xpBar').style.width=pct+'%';
+}
+updateUI();
 
-function moverCanasta() {
-    const ancho = window.innerWidth - 140;
-    const alto = window.innerHeight - 220;
-
-    canasta.style.left = Math.random() * ancho + "px";
-    canasta.style.top = Math.random() * alto + "px";
+function addPoints(n){
+ points+=n;
+ let nl=Math.floor(points/100)+1;
+ if(nl>level){level=nl;alert('🎉 Nivel '+level);}
+ localStorage.setItem('points',points);
+ localStorage.setItem('level',level);
+ updateUI();
 }
 
-function actualizar() {
-    document.getElementById("nivel").textContent = nivel;
-    document.getElementById("puntos").textContent = puntos;
-    document.getElementById("objetivo").textContent = objetivo;
+function doSpin(){
+ let deg=Math.floor(Math.random()*360)+1800;
+ wheel.style.transform='rotate('+deg+'deg)';
+ setTimeout(()=>{
+  let rewards=[10,25,50,100,200,0];
+  let r=rewards[Math.floor(Math.random()*rewards.length)];
+  addPoints(r);
+  result.textContent=r?('🎉 Ganaste '+r+' puntos'):('😅 Sigue intentando');
+ },4000);
 }
 
-canasta.addEventListener("click", () => {
+function spin(){
+ spins++;
+ localStorage.setItem('spins',spins);
+ let adTurn=(spins%3===0);
 
-    puntos++;
-
-    actualizar();
-
-    moverCanasta();
-
-    if (puntos >= objetivo) {
-        completarNivel();
-    }
-});
-
-function completarNivel() {
-
-    show_11121391()
-    .then(() => {
-
-        nivel++;
-        puntos = 0;
-        objetivo += 2;
-
-        actualizar();
-
-        alert("🎉 Pasaste al nivel " + nivel);
-
-        moverCanasta();
-
-    })
-    .catch(() => {
-
-        nivel++;
-        puntos = 0;
-        objetivo += 2;
-
-        actualizar();
-
-        moverCanasta();
-    });
+ if(adTurn && typeof window.show_11121391==='function'){
+   show_11121391('pop').then(()=>doSpin()).catch(()=>doSpin());
+ }else{
+   doSpin();
+ }
 }
 
-moverCanasta();
-actualizar();
+function dailyReward(){
+ let last=localStorage.getItem('daily');
+ let today=new Date().toDateString();
+ if(last===today){alert('Ya reclamaste hoy');return;}
+ localStorage.setItem('daily',today);
+ addPoints(100);
+ alert('🎁 +100 puntos');
+}
+
+function buy(cost,item){
+ if(points<cost){shopMsg.textContent='❌ No tienes suficientes puntos';return;}
+ points-=cost;
+ localStorage.setItem('points',points);
+ updateUI();
+ if(item==='Caja Misteriosa'){
+   let prize=[100,250,500,1000][Math.floor(Math.random()*4)];
+   addPoints(prize);
+   shopMsg.textContent='📦 Caja: '+prize+' puntos';
+ }else{
+   shopMsg.textContent='✅ Compraste '+item;
+ }
+}
 </script>
-
 </body>
 </html>
